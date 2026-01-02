@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>英文法クイズアプリ</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 10px;
+      line-height: 1.6;
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.6rem;
+    }
+    .question {
+      margin: 20px 0;
+      font-weight: bold;
+      white-space: pre-line;
+    }
+    .choices button {
+      display: block;
+      width: 100%;
+      margin: 6px 0;
+      padding: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    #explanation {
+      margin-top: 5px;
+      color: #555;
+    }
+    #score {
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+    #nextBtn {
+      margin-top: 20px;
+      padding: 10px 14px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>英文法クイズ</h1>
+
+  <div id="question"></div>
+  <div id="choices" class="choices"></div>
+  <div id="result"></div>
+  <div id="explanation"></div>
+  <div id="score"></div>
+  <button id="nextBtn">次の問題へ</button>
+
+  <script>
+    const questions = [
+      {
+        question: "「私は毎日図書館に行きます。」に最も近い英文はどれ？",
+        choices: [
+          "I go to the library every day.",
+          "I am go to the library every day.",
+          "I goes to the library every day.",
+          "I am going to the library every day."
+        ],
+        answerIndex: 0,
+        explanation: "習慣なので現在形。主語が I なので go。"
+      },
+      {
+        question: "「彼は今、宿題をしています。」に最も近い英文はどれ？",
+        choices: [
+          "He does his homework now.",
+          "He is doing his homework now.",
+          "He do his homework now.",
+          "He is do his homework now."
+        ],
+        answerIndex: 1,
+        explanation: "「今」の動作なので現在進行形（is doing）。"
+      },
+      {
+        question: "空所に入る最も適切な語は？\nShe ___ speak English very well.",
+        choices: ["can", "is", "does", "was"],
+        answerIndex: 0,
+        explanation: "能力を表す助動詞 can を使う。"
+      },
+      {
+        question: "空所に入る最も適切な語は？\nI usually get up ___ six.",
+        choices: ["at", "in", "on", "to"],
+        answerIndex: 0,
+        explanation: "時刻の前には at を使う。"
+      }
+    ];
+
+    let index = 0;
+    let score = 0;
+    let answered = false;
+
+    const qEl = document.getElementById("question");
+    const cEl = document.getElementById("choices");
+    const rEl = document.getElementById("result");
+    const eEl = document.getElementById("explanation");
+    const sEl = document.getElementById("score");
+    const nextBtn = document.getElementById("nextBtn");
+
+    function showQuestion() {
+      answered = false;
+      const q = questions[index];
+      qEl.textContent = q.question;
+      cEl.innerHTML = "";
+      rEl.textContent = "";
+      eEl.textContent = "";
+
+      q.choices.forEach((choice, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = choice;
+        btn.onclick = () => selectAnswer(i);
+        cEl.appendChild(btn);
+      });
+
+      sEl.textContent = `スコア：${score} / ${index}`;
+    }
+
+    function selectAnswer(i) {
+      if (answered) return;
+      answered = true;
+
+      const q = questions[index];
+      if (i === q.answerIndex) {
+        rEl.textContent = "正解！";
+        rEl.style.color = "green";
+        score++;
+      } else {
+        rEl.textContent = "不正解…";
+        rEl.style.color = "red";
+      }
+
+      eEl.textContent = q.explanation;
+      sEl.textContent = `スコア：${score} / ${index + 1}`;
+    }
+
+    nextBtn.onclick = () => {
+      if (index < questions.length - 1) {
+        index++;
+        showQuestion();
+      } else {
+        qEl.textContent = "全ての問題が終了しました。";
+        cEl.innerHTML = "";
+        rEl.textContent = "";
+        eEl.textContent = "";
+        sEl.textContent = `最終スコア：${score} / ${questions.length}`;
+        nextBtn.disabled = true;
+        nextBtn.textContent = "終了";
+      }
+    };
+
+    showQuestion();
+  </script>
+</body>
+</html>
